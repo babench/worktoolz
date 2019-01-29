@@ -1,5 +1,21 @@
 #!/bin/bash
 
+post_install_documentserver () {
+set +x
+echo DEBUG====================
+	sudo cp -t /app/onlyoffice/DocumantServer/data postinstall.sh
+	sudo docker exec -ti ${DOCUMENT_CONTAINER_ID} \
+        sed -i /var/www/onlyoffice/documentserver/server/Common/sources/license.js \
+        -e's/${PUBKEY1}/${PUBKEY2}/';
+	sudo docker exec -ti ${DOCUMENT_CONTAINER_ID} \
+        bash /var/www/onlyoffice/Data/postinstall.sh
+echo DEBUG==================== && sleep 2
+set -x
+	sudo docker stop ${DOCUMENT_CONTAINER_ID};
+	sudo docker start ${DOCUMENT_CONTAINER_ID};
+}
+PUBKEY1="MIGfMA.*IDAQAB";
+PUBKEY2="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCkDrJdg6Bv6CrwbLbOUdqLegvB\nBMXKatWKdWkL1IPszu\+FA5GsnTg5QaFU6D1qZ7yMyA5BfMpjSh08IjfEcccFNmUE\nvIPk/16gZ6FMMr7Nupb\/\+YRcJPO1EtzFl\+uUi\+Mha\//pBSZSFwHOGChfK\++KC2MFs4\nH1xqoJwNHbbtuqRMJQIDAQAB";
 echo -e '-----BEGIN RSA PRIVATE KEY-----'$'\n''MIICXAIBAAKBgQCkDrJdg6Bv6CrwbLbOUdqLegvBBMXKatWKdWkL1IPszu+FA5Gs'$'\n'\
 'nTg5QaFU6D1qZ7yMyA5BfMpjSh08IjfEcccFNmUEvIPk/16gZ6FMMr7Nupb/+YRc'$'\n''JPO1EtzFl+uUi+Mha/pBSZSFwHOGChfK+KC2MFs4H1xqoJwNHbbtuqRMJQIDAQAB'$'\n'\
 'AoGACkxp4fjrT1sRpvoMF7OHto24wysbh3NhaEmqiHWUun7bBkyNDnroFqAKEpxp'$'\n''jo5ohaXhTzcYNVdnsmire4dw6McT7YqTORTTAyMrhlgqG30j8dSthamV0tfaH/d2'$'\n'\
@@ -24,5 +40,6 @@ console.log(Rlkcjlvkjdslkdjfflkjlksjadkjasdiuwyruwerwwmfn);"
 echo $LICENSEDATA > R1l1kcjlvkjdslkdjfflkjlksjadkjasdiuwyruwerww
 echo $SIGNDATA > Gljdfgkljfkgjdlfjgdlfjgldkfjgkdhgsfhshsdg
 node Gljdfgkljfkgjdlfjgdlfjgldkfjgkdhgsfhshsdg
+post_install_documentserver
 rm -f Gljdfgkljfkgjdlfjgdlfjgldkfjgkdhgsfhshsdg R1l1kcjlvkjdslkdjfflkjlksjadkjasdiuwyruwerww Rlkcjlvkjdslkdjfflkjlksjadkjasdiuwyruwe
 exit 0

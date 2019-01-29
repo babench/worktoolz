@@ -15,10 +15,6 @@ DISK_REQUIREMENTS=0;
 MEMORY_REQUIREMENTS=0;
 CORE_REQUIREMENTS=0;
 
-APP_DATA="/var/app/onlyoffice";
-PUBKEY1="MIGfMA.*IDAQAB";
-PUBKEY2="MIGfMA0GCSqGSIb3DQEBAQUAA4GNADCBiQKBgQCkDrJdg6Bv6CrwbLbOUdqLegvB\nBMXKatWKdWkL1IPszu\+FA5GsnTg5QaFU6D1qZ7yMyA5BfMpjSh08IjfEcccFNmUE\nvIPk/16gZ6FMMr7Nupb\/\+YRcJPO1EtzFl\+uUi\+Mha\//pBSZSFwHOGChfK\++KC2MFs4\nH1xqoJwNHbbtuqRMJQIDAQAB";
-
 COMMUNITY_CONTAINER_NAME="onlyoffice-community-server";
 DOCUMENT_CONTAINER_NAME="onlyoffice-document-server";
 MAIL_CONTAINER_NAME="onlyoffice-mail-server";
@@ -1150,7 +1146,6 @@ install_document_server () {
 			echo "ONLYOFFICE DOCUMENT SERVER not installed."
 			exit 1;
 		else
-			post_install_documentserver;
 			COMMUNITY_SERVER_ID=$(get_container_id "$COMMUNITY_CONTAINER_NAME");
 
 			if [[ -n ${COMMUNITY_SERVER_ID} ]]; then
@@ -1158,21 +1153,6 @@ install_document_server () {
 			fi
 		fi
 	fi
-}
-
-post_install_documentserver () {
-set +x
-echo DEBUG====================
-	sudo cp -t /app/onlyoffice/DocumantServer/data postinstall.sh
-	sudo docker exec -ti ${DOCUMENT_CONTAINER_ID} \
-        sed -i /var/www/onlyoffice/documentserver/server/Common/sources/license.js \
-        -e's/${PUBKEY1}/${PUBKEY2}/';
-	sudo docker exec -ti ${DOCUMENT_CONTAINER_ID} \
-        bash /var/www/onlyoffice/Data/postinstall.sh
-echo DEBUG==================== && sleep 2
-set -x
-	sudo docker stop ${DOCUMENT_CONTAINER_ID};
-	sudo docker start ${DOCUMENT_CONTAINER_ID};
 }
 
 install_mail_server () {
